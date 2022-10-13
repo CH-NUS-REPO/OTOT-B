@@ -22,16 +22,21 @@ app.get("/user/all", async (req, res) => {
         // Validate if user exist in our database
         const users = await User.find({});
         // return new user
-        res.status(201).json(users);
+        return res.status(201).json(users);
     } catch (err) {
         console.log(err);
+        return res.status(500).send("Failed to get users.");
     }
 });
 
+// TODO: for all catch the json data error and send an error response back 
 app.post("/user/add", async (req, res) => {
     try {
         // Get user input
         const { first_name, last_name, email } = req.body;
+        if (!first_name || !last_name || !email) {
+            return res.status(400).send("first_name, last_name, and email should be provided!");
+        }
         
         // check if user already exist
         // Validate if user exist in our database
@@ -49,14 +54,18 @@ app.post("/user/add", async (req, res) => {
         });
 
         // return new user
-        res.status(201).json(user);
+        return res.status(201).json(user);
     } catch (err) {
         console.log(err);
+        return res.status(500).send("Failed to add user.");
     }
 });
 
 app.put("/user/update", async (req, res) => {
     const { first_name, last_name, email } = req.body;
+    if (!first_name || !last_name || !email) {
+        return res.status(400).send("first_name, last_name, and email should be provided!");
+    }
     const user = await User.findOneAndUpdate(
         { email: email }, 
         { first_name: first_name, last_name: last_name },
