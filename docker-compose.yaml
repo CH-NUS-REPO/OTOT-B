@@ -10,11 +10,3 @@ services:
     environment:
       - API_PORT=8000
       - MONGO_URI=mongodb://mongo:27017
-
-  mongo:
-    image: mongo:4.2.23-rc1
-    volumes:
-      - mongovolume:/data/db
-
-volumes:
-  mongovolume:

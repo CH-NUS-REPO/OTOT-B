@@ -22,14 +22,13 @@ app.get("/user/all", async (req, res) => {
         // Validate if user exist in our database
         const users = await User.find({});
         // return new user
-        return res.status(201).json(users);
+        return res.status(200).json(users);
     } catch (err) {
         console.log(err);
         return res.status(500).send("Failed to get users.");
     }
 });
 
-// TODO: for all catch the json data error and send an error response back 
 app.post("/user/add", async (req, res) => {
     try {
         // Get user input
@@ -72,7 +71,7 @@ app.put("/user/update", async (req, res) => {
         { new: true }
     );
     if (user) {
-        return res.status(200).send(user);
+        return res.status(201).send(user);
     }
     
     return res.status(409).send("User doesn't exist.");
@@ -82,7 +81,7 @@ app.delete("/user/delete", async (req, res) => {
     const { email } = req.body;
     const user = await User.findOneAndDelete({ email: email });
     if (user) {
-        return res.status(200).send(user);
+        return res.status(201).send(user);
     }
     
     return res.status(409).send("User doesn't exist or delete failed");

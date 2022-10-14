@@ -1,0 +1,8 @@
+sudo: required
+services:
+  - docker
+install: skip
+before_script:
+  - bash tests/sh/build-test.sh
+script:
+  - bash tests/sh/test.sh

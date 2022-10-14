@@ -1,12 +1,20 @@
 # Running locally
 
 ```sh
-$ docker-compose up --build
+$ docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up --build
 ```
 
 # Deployed Endpoint
 
-https://otot-b-4zvqq6zmhq-as.a.run.app/
+This app is also deployed on Google Cloud Run, which could be accessed through this url: https://otot-b-4zvqq6zmhq-as.a.run.app/. 
+
+The deployed process is as follows:
+1. Create a MongoDB free tier cluster on [MongoDB cloud](https://cloud.mongodb.com/). Whitelist the connection of `0.0.0.0/0` to allow all external connections.
+1. Build the Docker image and push it to Google Artifact Registry.
+1. Setup Google Secret Manager and input the MONGO_URI to be the url of the mongodb cluster we just created (with username and password).
+1. Configure Cloud Run to pull from that image and use the secret we just created. Make sure the service account has the permission to the secret.
+
+TODO: CD
 
 # API
 - `GET /user/all` - List all the registered users
