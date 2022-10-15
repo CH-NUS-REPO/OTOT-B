@@ -14,7 +14,10 @@ The deployed process is as follows:
 1. Setup Google Secret Manager and input the MONGO_URI to be the url of the mongodb cluster we just created (with username and password).
 1. Configure Cloud Run to pull from that image and use the secret we just created. Make sure the service account has the permission to the secret.
 
-TODO: CD
+After that, Travis CD is setup to update the artifact registry. The steps to setup are as follows:
+1. Download the json key of the service account, encrypt it and add it to `.travis.yml` using `travis encrypt-file client-secret.json --add`. Make sure the service account has the role `roles/run.invoker`. Add the encrpted json file to this repo.
+1. Update the `env` fields in `.travis.yml` to corresponding Cloud Run project details. 
+1. Once travis CI passes the tests, the updated image will be deployed to Cloud Run automatically.
 
 # API
 - `GET /user/all` - List all the registered users

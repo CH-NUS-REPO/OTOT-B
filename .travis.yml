@@ -1,8 +1,32 @@
 sudo: required
+env:
+  global:
+  - GCP_PROJECT_ID=pset8-1486514071642
+  - IMAGE=asia-southeast1-docker.pkg.dev/pset8-1486514071642/cs3219/otot-b
+  - CLOUD_RUN_SERVICE=otot-b
+  - CLOUD_RUN_REGION=asia-southeast1
+  - CLOUDSDK_CORE_DISABLE_PROMPTS=1 # prevent gcloud from prompting
 services:
-  - docker
+- docker
+before_install:
+- openssl aes-256-cbc -K $encrypted_0240d80f6e91_key -iv $encrypted_0240d80f6e91_iv
+  -in pset8-1486514071642-ca0b0cbc0a3b.json.enc -out pset8-1486514071642-ca0b0cbc0a3b.json
+  -d
+- curl https://sdk.cloud.google.com | bash > /dev/null
+- source "$HOME/google-cloud-sdk/path.bash.inc"
+- gcloud auth activate-service-account --key-file=pset8-1486514071642-ca0b0cbc0a3b.json
+- gcloud auth configure-docker asia-southeast1-docker.pkg.dev  # enable "docker push" to gcr
+- gcloud config set project "${GCP_PROJECT_ID}"
 install: skip
 before_script:
-  - bash tests/sh/build-test.sh
+- bash tests/sh/build-test.sh
 script:
-  - bash tests/sh/test.sh
+- bash tests/sh/test.sh
+after_success:
+- docker build -t "${IMAGE}:latest" .
+- docker push "${IMAGE}:latest"
+- gcloud run deploy "${CLOUD_RUN_SERVICE}" 
+    --image="${IMAGE}:latest" 
+    --platform=managed 
+    --region="${CLOUD_RUN_REGION}" 
+    --allow-unauthenticated
