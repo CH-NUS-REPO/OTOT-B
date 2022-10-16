@@ -1,11 +1,13 @@
 const express = require("express");
 const axios = require('axios');
 const User = require("./model/user");
+const cors = require('cors')
 require("./config/database").connect();
 
 const exchangeURL = 'https://api.exchangerate.host/latest';
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 async function getExchangeRate() {
     try {
